@@ -30,6 +30,12 @@ def main() -> None:
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(OUT_FILE, "w", encoding="utf-8", newline="") as f:
         f.write(one_line(LINE))
+    # Read the file back: a silent write failure must never leave a wrong
+    # entry behind, so refuse to finish unless the bytes on disk are the line.
+    with open(OUT_FILE, "r", encoding="utf-8", newline="") as f:
+        written = f.read()
+    if written != LINE:
+        raise ValueError("entry.txt does not hold the line")
 
 
 if __name__ == "__main__":
